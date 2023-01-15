@@ -1,45 +1,4 @@
-const dataExample = [
-  {
-    list1: {
-      id: "list-1",
-      title: "list 1",
-      cards: [
-        {
-          id: "card-1",
-          title: "card 1",
-          description: "",
-          member: [
-            {
-              id: "member-1",
-              name: "member 1",
-            },
-          ],
-          status: "NEW",
-        },
-      ],
-    },
-  },
-  {
-    list2: {
-      id: "list-2",
-      title: "list 2",
-      cards: [
-        {
-          id: "card-1",
-          title: "card 1",
-          description: "",
-          member: [
-            {
-              id: "member-1",
-              name: "member 1",
-            },
-          ],
-          status: "NEW",
-        },
-      ],
-    },
-  },
-];
+
 
 // list: find item in array => remove item 0 -> add item new position
 
@@ -48,7 +7,7 @@ const dataExample = [
 
 // hash map object
 export const data = {
-  columns: ["list-1", "list-2"],
+  columns: ["list-1", "list-2", "list-3", "list-4"],
   lists: {
     "list-1": {
       id: "list-1",
@@ -60,9 +19,20 @@ export const data = {
       title: "list 2",
       cards: ["card-3"],
     },
+    "list-3": {
+      id: "list-3",
+      title: "list 3",
+      cards: [],
+    },
+    "list-4": {
+      id: "list-4",
+      title: "list 4",
+      cards: [],
+    },
   },
-  cards: [
-    {
+  
+  cards: {
+    "card-1": {
       id: "card-1",
       title: "card 1",
       description: "",
@@ -74,7 +44,7 @@ export const data = {
       ],
       status: "NEW",
     },
-    {
+    "card-2": {
       id: "card-2",
       title: "card 1",
       description: "",
@@ -86,7 +56,7 @@ export const data = {
       ],
       status: "NEW",
     },
-    {
+    "card-3":  {
       id: "card-3",
       title: "card 1",
       description: "",
@@ -98,5 +68,5 @@ export const data = {
       ],
       status: "NEW",
     },
-  ],
+  }
 };

@@ -1,13 +1,11 @@
-import { useState, useCallback } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useState } from "react";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 // ant core
 import {
-  Card,
   Avatar,
   Tooltip,
   Button,
-  Popconfirm,
   Modal,
   Input,
   Form,
@@ -15,13 +13,13 @@ import {
 } from "antd";
 
 // ant icons
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 // components
-import SimpleCard from "./components/SimpleCard";
+import TrelloList from './components/TrelloList';
 
-// mock data
-import { data } from "./data";
+// context
+import { useAppContext } from "./context/AppContext";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -38,6 +36,7 @@ function App() {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const { trello, onDragEndCard, onDragEndList } = useAppContext();
 
   const handleSubmit = (values) => {
     console.log("values: ", values);
@@ -93,21 +92,35 @@ function App() {
   }
 
   // using useCallback is optional
-  const onBeforeCapture = useCallback((result) => {
-    console.log("onBeforeCapture: ", result);
-  }, []);
-  const onBeforeDragStart = useCallback((result) => {
-    console.log("onBeforeDragStart: ", result);
-  }, []);
-  const onDragStart = useCallback((result) => {
-    console.log("onBeforeDragStart: ", result);
-  }, []);
-  const onDragUpdate = useCallback((result) => {
-    console.log("onBeforeDragStart: ", result);
-  }, []);
-  const onDragEnd = useCallback((result) => {
-    console.log("onBeforeDragStart: ", result);
-  }, []);
+  // const onBeforeCapture = useCallback((result) => {
+  //   console.log("onBeforeCapture: ", result);
+  // }, []);
+  // const onBeforeDragStart = useCallback((result) => {
+  //   console.log("onBeforeDragStart: ", result) ;
+  // }, []);
+  // const onDragStart = useCallback((result) => {
+  //   console.log("onDragStart: ", result);
+  // }, []);
+  // const onDragUpdate = useCallback((result) => {
+  //   console.log("onDragUpdate: ", result);
+  // }, []);
+  const onDragEnd = (result) => {
+    if(!result.destination) {
+      console.log('no update destination');
+      return;
+    }
+
+    // update list postion
+    if(result.type === 'LIST') {
+      onDragEndList(result);
+      return;
+    }
+
+    // update card position
+    if(result.type === 'CARD') {
+      onDragEndCard(result);
+    }
+  };
 
   return (
     <>
@@ -125,10 +138,10 @@ function App() {
       <main>
         <div className="container">
           <DragDropContext
-            onBeforeCapture={onBeforeCapture}
-            onBeforeDragStart={onBeforeDragStart}
-            onDragStart={onDragStart}
-            onDragUpdate={onDragUpdate}
+            // onBeforeCapture={onBeforeCapture}
+            // onBeforeDragStart={onBeforeDragStart}
+            // onDragStart={onDragStart}
+            // onDragUpdate={onDragUpdate}
             onDragEnd={onDragEnd}
           >
             <Droppable
@@ -148,57 +161,17 @@ function App() {
                   {...provided.droppableProps}
                 >
                   <>
-                    {data.columns.map((listId, listIndex) => {
-                      const listItem = data.lists[listId];
-
+                    {trello.columns.map((listId, listIndex) => {
+                      const listItem = trello.lists[listId];
+                      const cards = listItem.cards.map(cardId => trello.cards[cardId])
                       return (
-                        <Draggable
-                          draggableId={String(listId)}
+                        <TrelloList 
+                          key={listItem.id}
+                          listId={listItem.id}
                           index={listIndex}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                            >
-                              <Card
-                                title={listItem.title}
-                                className="cardList"
-                                extra={
-                                  <>
-                                    <Tooltip title="Add a card">
-                                      <Button
-                                        shape="circle"
-                                        icon={<PlusOutlined />}
-                                        onClick={() => setOpen(true)}
-                                      />
-                                    </Tooltip>
-
-                                    <Popconfirm
-                                      title="Delete the list"
-                                      description="Are you sure to delete this list?"
-                                      onConfirm={() => {}}
-                                      onCancel={() => {}}
-                                      okText="Yes"
-                                      cancelText="No"
-                                      className="ml-10"
-                                    >
-                                      <Tooltip title="Delete this list">
-                                        <Button
-                                          shape="circle"
-                                          icon={<DeleteOutlined />}
-                                        />
-                                      </Tooltip>
-                                    </Popconfirm>
-                                  </>
-                                }
-                              >
-                                <SimpleCard />
-                              </Card>
-                            </div>
-                          )}
-                        </Draggable>
+                          title={listItem.title}
+                          cards={cards}
+                        />
                       );
                     })}
                     {provided.placeholder}
