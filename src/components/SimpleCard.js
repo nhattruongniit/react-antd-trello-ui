@@ -5,8 +5,6 @@ import {
   Avatar,
   Tooltip,
   Popconfirm,
-  Input,
-  Select,
 } from "antd";
 import {
   EditOutlined,
@@ -21,11 +19,12 @@ const { Meta } = Card;
 function SimpleCard({ card, index }) {
   return (
     <Draggable draggableId={card.id} index={index}>
-      {(provided, snapshot) => (
+      {(provided) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          className="card"
         >
           <Card
             className="cardItem"

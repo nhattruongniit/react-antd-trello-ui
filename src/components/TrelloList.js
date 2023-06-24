@@ -15,7 +15,7 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 // components
 import SimpleCard from './SimpleCard';
 
-function TrelloList({ index, listId, title, cards }) {
+function TrelloList({ index, listId, title, cards, setOpen }) {
 
   return (
     <Draggable
@@ -29,7 +29,7 @@ function TrelloList({ index, listId, title, cards }) {
           {...provided.dragHandleProps}
         >
           <Droppable droppableId={String(listId)} type="CARD">
-            {(provided, snapshot) => (
+            {(provided) => (
               <Card
                 title={title}
                 className="cardList"
@@ -39,6 +39,7 @@ function TrelloList({ index, listId, title, cards }) {
                       <Button
                         shape="circle"
                         icon={<PlusOutlined />}
+                        onClick={() => setOpen(true)}
                       />
                     </Tooltip>
     

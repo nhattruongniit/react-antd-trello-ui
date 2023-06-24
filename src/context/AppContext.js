@@ -1,7 +1,7 @@
 import React from 'react';
 
 // mock data
-import { data } from '../data';
+import { data } from '../mocks/data';
 
 export const AppContext = React.createContext();
 

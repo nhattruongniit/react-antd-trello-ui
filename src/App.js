@@ -1,13 +1,10 @@
-import { useState, useCallback } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useState } from "react";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 // ant core
 import {
-  Card,
   Avatar,
-  Tooltip,
   Button,
-  Popconfirm,
   Modal,
   Input,
   Form,
@@ -15,7 +12,7 @@ import {
 } from "antd";
 
 // ant icons
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 // components
 import TrelloList from "./components/TrelloList";
@@ -55,44 +52,6 @@ function App() {
     console.log(`selected ${value}`);
   };
 
-  function handleViewDetail() {
-    Modal.info({
-      title: "Card Detail",
-      content: (
-        <>
-          <div>
-            <h4>Title</h4>
-            <div>This is title</div>
-          </div>
-          <br />
-          <div>
-            <h4>Description</h4>
-            <div>This is description</div>
-          </div>
-          <br />
-          <div>
-            <h4>Member</h4>
-            <div>
-              <Avatar.Group>
-                <Tooltip title="Tony Nguyen" placement="top">
-                  <Avatar src="https://picsum.photos/265/160" />
-                </Tooltip>
-                <Tooltip title="Phuong Nguyen" placement="top">
-                  <Avatar src="https://picsum.photos/265/160" />
-                </Tooltip>
-              </Avatar.Group>
-            </div>
-          </div>
-          <br />
-          <div>
-            <h4>Status</h4>
-            <div>New</div>
-          </div>
-        </>
-      ),
-      onOk() {},
-    });
-  }
 
   // using useCallback is optional
   const onDragEnd = (result) => {
@@ -153,6 +112,7 @@ function App() {
                           title={listItem.title}
                           cards={cards}
                           listId={listItem.id}
+                          setOpen={setOpen}
                         />
                       );
                     })}
