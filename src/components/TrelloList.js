@@ -27,6 +27,7 @@ function TrelloList({ index, listId, title, cards, setOpen }) {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          className='todoList'
         >
           <Droppable droppableId={String(listId)} type="CARD">
             {(provided) => (
