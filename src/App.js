@@ -1,5 +1,4 @@
-import { useState, useCallback } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useState } from "react";
 
 // ant core
 import {
@@ -19,9 +18,6 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 // components
 import SimpleCard from "./components/SimpleCard";
-
-// mock data
-import { data } from "./data";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -53,62 +49,6 @@ function App() {
     console.log(`selected ${value}`);
   };
 
-  function handleViewDetail() {
-    Modal.info({
-      title: "Card Detail",
-      content: (
-        <>
-          <div>
-            <h4>Title</h4>
-            <div>This is title</div>
-          </div>
-          <br />
-          <div>
-            <h4>Description</h4>
-            <div>This is description</div>
-          </div>
-          <br />
-          <div>
-            <h4>Member</h4>
-            <div>
-              <Avatar.Group>
-                <Tooltip title="Tony Nguyen" placement="top">
-                  <Avatar src="https://picsum.photos/265/160" />
-                </Tooltip>
-                <Tooltip title="Phuong Nguyen" placement="top">
-                  <Avatar src="https://picsum.photos/265/160" />
-                </Tooltip>
-              </Avatar.Group>
-            </div>
-          </div>
-          <br />
-          <div>
-            <h4>Status</h4>
-            <div>New</div>
-          </div>
-        </>
-      ),
-      onOk() {},
-    });
-  }
-
-  // using useCallback is optional
-  const onBeforeCapture = useCallback((result) => {
-    console.log("onBeforeCapture: ", result);
-  }, []);
-  const onBeforeDragStart = useCallback((result) => {
-    console.log("onBeforeDragStart: ", result);
-  }, []);
-  const onDragStart = useCallback((result) => {
-    console.log("onBeforeDragStart: ", result);
-  }, []);
-  const onDragUpdate = useCallback((result) => {
-    console.log("onBeforeDragStart: ", result);
-  }, []);
-  const onDragEnd = useCallback((result) => {
-    console.log("onBeforeDragStart: ", result);
-  }, []);
-
   return (
     <>
       <header>
@@ -123,93 +63,86 @@ function App() {
       </header>
 
       <main>
-        <div className="container">
-          <DragDropContext
-            onBeforeCapture={onBeforeCapture}
-            onBeforeDragStart={onBeforeDragStart}
-            onDragStart={onDragStart}
-            onDragUpdate={onDragUpdate}
-            onDragEnd={onDragEnd}
-          >
-            <Droppable
-              droppableId="all-lists"
-              direction="horizontal"
-              type="LIST"
-            >
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  style={
-                    {
-                      // backgroundColor: snapshot.isDraggingOver ? "blue" : "grey",
-                    }
-                  }
-                  className="listContainer"
-                  {...provided.droppableProps}
+        <div className="container flex mt-2 px-2">
+          <Card
+            title="List 1"
+            className="cardList"
+            extra={
+              <>
+                <Tooltip title="Add a card">
+                  <Button
+                    shape="circle"
+                    icon={<PlusOutlined />}
+                    onClick={() => setOpen(true)}
+                  />
+                </Tooltip>
+
+                <Popconfirm
+                  title="Delete the list"
+                  description="Are you sure to delete this list?"
+                  onConfirm={() => {}}
+                  onCancel={() => {}}
+                  okText="Yes"
+                  cancelText="No"
+                  className="ml-10"
                 >
-                  <>
-                    {data.columns.map((listId, listIndex) => {
-                      const listItem = data.lists[listId];
+                  <Tooltip title="Delete this list">
+                    <Button
+                      shape="circle"
+                      icon={<DeleteOutlined />}
+                    />
+                  </Tooltip>
+                </Popconfirm>
+              </>
+            }
+          >
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+          </Card>
+          <Card
+            title="List 2"
+            className="cardList"
+            extra={
+              <>
+                <Tooltip title="Add a card">
+                  <Button
+                    shape="circle"
+                    icon={<PlusOutlined />}
+                    onClick={() => setOpen(true)}
+                  />
+                </Tooltip>
 
-                      return (
-                        <Draggable
-                          draggableId={String(listId)}
-                          index={listIndex}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                            >
-                              <Card
-                                title={listItem.title}
-                                className="cardList"
-                                extra={
-                                  <>
-                                    <Tooltip title="Add a card">
-                                      <Button
-                                        shape="circle"
-                                        icon={<PlusOutlined />}
-                                        onClick={() => setOpen(true)}
-                                      />
-                                    </Tooltip>
-
-                                    <Popconfirm
-                                      title="Delete the list"
-                                      description="Are you sure to delete this list?"
-                                      onConfirm={() => {}}
-                                      onCancel={() => {}}
-                                      okText="Yes"
-                                      cancelText="No"
-                                      className="ml-10"
-                                    >
-                                      <Tooltip title="Delete this list">
-                                        <Button
-                                          shape="circle"
-                                          icon={<DeleteOutlined />}
-                                        />
-                                      </Tooltip>
-                                    </Popconfirm>
-                                  </>
-                                }
-                              >
-                                <SimpleCard />
-                              </Card>
-                            </div>
-                          )}
-                        </Draggable>
-                      );
-                    })}
-                    {provided.placeholder}
-                    <Button type="text">
-                      <PlusOutlined /> Add another list
-                    </Button>
-                  </>
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+                <Popconfirm
+                  title="Delete the list"
+                  description="Are you sure to delete this list?"
+                  onConfirm={() => {}}
+                  onCancel={() => {}}
+                  okText="Yes"
+                  cancelText="No"
+                  className="ml-10"
+                >
+                  <Tooltip title="Delete this list">
+                    <Button
+                      shape="circle"
+                      icon={<DeleteOutlined />}
+                    />
+                  </Tooltip>
+                </Popconfirm>
+              </>
+            }
+          >
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+          </Card>
+          <Button type="text">
+            <PlusOutlined /> Add another list
+          </Button>
         </div>
       </main>
 

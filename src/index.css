@@ -17,7 +17,7 @@ code {
 }
 
 main {
-  padding-top: 40px;
+  padding: 40px 16px 0px 16px;
 }
 
 ::-webkit-scrollbar-track {
@@ -153,4 +153,15 @@ main {
   white-space: nowrap;
   height: 100%;
   padding: 8px 15px 0 15px;
+}
+
+.flex {
+  display: flex;
+}
+
+.mt-2 {
+  margin-top: 1rem;
+}
+
+.px-2 {
 }

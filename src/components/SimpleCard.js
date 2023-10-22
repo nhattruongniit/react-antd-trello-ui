@@ -3,25 +3,17 @@ import {
   Card,
   Avatar,
   Tooltip,
-  Button,
   Popconfirm,
-  Modal,
-  Input,
-  Form,
-  Select,
 } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
   AntDesignOutlined,
   UserOutlined,
-  PlusOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
 
 const { Meta } = Card;
-const { TextArea } = Input;
-const { Option } = Select;
 
 function SimpleCard() {
   return (
