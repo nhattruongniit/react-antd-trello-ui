@@ -169,3 +169,6 @@ main {
   flex-direction: column;
   word-break: break-all;
 }
+.trelloList_content {
+  min-height: 10px;
+}

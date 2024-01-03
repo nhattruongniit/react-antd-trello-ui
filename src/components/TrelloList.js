@@ -66,7 +66,8 @@ function TrelloList({ index, listId, title, cards, setOpen }) {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  >
+                  className="trelloList_content"
+                >
                   {cards.map((card, cardIndex) => (
                     <SimpleCard 
                       key={card.id}
