@@ -1,28 +1,20 @@
 import { useState } from "react";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { useNavigate } from "react-router-dom";
 
 // ant core
 import {
-  Avatar,
-  Button,
-  Modal,
+  Card,
+  Tooltip,
   Input,
-  Form,
-  Select,
+  Button,
+  Popconfirm,
 } from "antd";
-
 // ant icons
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, BarChartOutlined, CloseOutlined } from "@ant-design/icons";
 
 // components
-import TrelloList from "./components/TrelloList";
-
-// mock data
-import { useAppContext } from "./context/AppContext";
-
-
-const { TextArea } = Input;
-const { Option } = Select;
+import SimpleCard from "./components/SimpleCard";
+import ModalAddCard from "./components/ModalAddCard";
 
 const options = [];
 for (let i = 10; i < 36; i++) {
@@ -33,44 +25,19 @@ for (let i = 10; i < 36; i++) {
 }
 
 function App() {
-  const [form] = Form.useForm();
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const { trello, onDragEndList, onDragEndCard }  = useAppContext();
-
-  const handleSubmit = (values) => {
-    console.log("values: ", values);
-
-    setConfirmLoading(true);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-  };
-
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
-
-
-  // using useCallback is optional
-  const onDragEnd = (result) => {
-    if(!result.destination) return;
-
-    if(result.type === 'LIST') {
-      onDragEndList(result)
-    }
-
-    if(result.type === 'CARD') {
-      onDragEndCard(result)
-    }
-  };
+  const [openAddCard, setOpenAddCard] = useState(false);
+  const [openCreateList, setOpenCreateList] = useState(false);
+  const [editTitleList, setEditTitleList] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
       <header>
         <div className="header__container">
-          <div className="header__logo" />
+          <div className="dashboard" style={{ width: 30, flexShrink: 0 }}  onClick={() => navigate('/report')}>
+            <BarChartOutlined size={15} />
+          </div>
+          <div className="header__logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')} />
           <div className="header__right">
             <div className="header__avatar">
               <img src="/assets/images/avatar.png" alt="Avatar" />
@@ -80,142 +47,83 @@ function App() {
       </header>
 
       <main>
-        <div className="container">
-          <DragDropContext
-            onDragEnd={onDragEnd}
-          >
-            <Droppable
-              droppableId="all-lists"
-              direction="horizontal"
-              type="LIST"
-            >
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  style={
-                    {
-                      // backgroundColor: snapshot.isDraggingOver ? "blue" : "grey",
-                    }
-                  }
-                  className="listContainer"
-                  {...provided.droppableProps}
-                >
-                  <>
-                    {trello.columns.map((listId, listIndex) => {
-                      const listItem = trello.lists[listId];
-                      const cards = listItem.cards.map(cardId => trello.cards[cardId]);
-
-                      return (
-                        <TrelloList 
-                          key={listItem.id}
-                          index={listIndex}
-                          title={listItem.title}
-                          cards={cards}
-                          listId={listItem.id}
-                          setOpen={setOpen}
-                        />
-                      );
-                    })}
-                    {provided.placeholder}
-                    <Button type="text">
-                      <PlusOutlined /> Add another list
-                    </Button>
-                  </>
+        <div className="container flex mt-2 px-2">
+          <Card
+            title={
+              <>
+                <div style={{ paddingRight: 12 }}>
+                  {editTitleList ? (
+                    <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #d9d9d9', borderRadius: 6, paddingRight: 8 }}>
+                      <Input style={{ border: 0, outline: 0, boxShadow: '0 0 0 transparent' }} />
+                      <Button type="text" icon={<CloseOutlined />} size="small" onClick={() => setEditTitleList(false)} />
+                    </div>
+                   
+                  ) : (
+                    <div onClick={() => setEditTitleList(true)} style={{ cursor: 'pointer' }}>
+                      List 1
+                    </div>
+                  )}
                 </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+              </>
+            }
+            className="cardList"
+            extra={
+              <>
+                <Tooltip title="Add a card">
+                  <Button
+                    shape="circle"
+                    icon={<PlusOutlined />}
+                    onClick={() => setOpenAddCard(true)}
+                  />
+                </Tooltip>
+
+                <Popconfirm
+                  title="Delete the list"
+                  description="Are you sure to delete this list?"
+                  onConfirm={() => {}}
+                  onCancel={() => {}}
+                  okText="Yes"
+                  cancelText="No"
+                  className="ml-10"
+                >
+                  <Tooltip title="Delete this list">
+                    <Button
+                      shape="circle"
+                      icon={<DeleteOutlined />}
+                    />
+                  </Tooltip>
+                </Popconfirm>
+              </>
+            }
+          >
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+            <SimpleCard />
+          </Card>
+          
+          <div>
+            {openCreateList ? (
+              <Card style={{ width: 300 }} size="small">
+                <span>Title:</span><Input />
+                <div style={{ display: 'flex', justifyContent: 'end', marginTop: 8 }}>
+                  <Button type="text" danger onClick={() => setOpenCreateList(false)} style={{ marginRight: 4 }}>Close</Button>
+                  <Button type="primary" onClick={() => setOpenCreateList(false)}>Create</Button>
+                </div>
+              </Card>
+            ) : (
+              <Button type="text" onClick={() => setOpenCreateList(true)}>
+                <PlusOutlined /> Add another list
+              </Button>
+            )}
+          </div>
+          
         </div>
       </main>
 
-      <Modal
-        title="Add Card"
-        open={open}
-        onOk={form.submit}
-        onCancel={handleCancel}
-        confirmLoading={confirmLoading}
-      >
-        <br />
-        <Form
-          name="basic"
-          form={form}
-          initialValues={{ status: "new" }}
-          onFinish={handleSubmit}
-          autoComplete="off"
-          labelCol={{ flex: "110px" }}
-          labelAlign="left"
-          wrapperCol={{ flex: 1 }}
-        >
-          <Form.Item
-            label="Title"
-            name="title"
-            rules={[{ required: true, message: "Please input your title!" }]}
-          >
-            <Input />
-          </Form.Item>
+      <ModalAddCard openAddCard={openAddCard} setOpenAddCard={setOpenAddCard} />
 
-          <Form.Item
-            label="Description"
-            name="description"
-            rules={[
-              { required: true, message: "Please input your description!" },
-            ]}
-          >
-            <TextArea rows={4} />
-          </Form.Item>
-
-          <Form.Item
-            label="Member"
-            name="member"
-            rules={[
-              { required: true, message: "Please input your description!" },
-            ]}
-          >
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "100%" }}
-              placeholder="Please select"
-              optionLabelProp="label"
-              onChange={handleChange}
-            >
-              <Option value="tony123" label="tony 123">
-                <div className="selectField">
-                  <Avatar src="https://picsum.photos/id/237/200/300" />
-                  <span>Tony Nguyen</span>
-                </div>
-              </Option>
-              <Option value="phuong123" label="phuong 123">
-                <div className="selectField">
-                  <Avatar src="https://picsum.photos/id/237/200/300" />
-                  <span>Phuong Nguyen</span>
-                </div>
-              </Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="Status" name="status">
-            <Select
-              style={{ width: 120 }}
-              onChange={handleChange}
-              options={[
-                {
-                  value: "new",
-                  label: "New",
-                },
-                {
-                  value: "inprocess",
-                  label: "In process",
-                },
-                {
-                  value: "done",
-                  label: "Done",
-                },
-              ]}
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 }
