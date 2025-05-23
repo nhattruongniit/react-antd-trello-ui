@@ -1,26 +1,20 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ant core
 import {
   Card,
-  Avatar,
   Tooltip,
+  Input,
   Button,
   Popconfirm,
-  Modal,
-  Input,
-  Form,
-  Select,
 } from "antd";
-
 // ant icons
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, BarChartOutlined, CloseOutlined } from "@ant-design/icons";
 
 // components
 import SimpleCard from "./components/SimpleCard";
-
-const { TextArea } = Input;
-const { Option } = Select;
+import ModalAddCard from "./components/ModalAddCard";
 
 const options = [];
 for (let i = 10; i < 36; i++) {
@@ -31,29 +25,19 @@ for (let i = 10; i < 36; i++) {
 }
 
 function App() {
-  const [form] = Form.useForm();
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
-  const handleSubmit = (values) => {
-    console.log("values: ", values);
-
-    setConfirmLoading(true);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-  };
-
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
+  const [openAddCard, setOpenAddCard] = useState(false);
+  const [openCreateList, setOpenCreateList] = useState(false);
+  const [editTitleList, setEditTitleList] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
       <header>
         <div className="header__container">
-          <div className="header__logo" />
+          <div className="dashboard" style={{ width: 30, flexShrink: 0 }}  onClick={() => navigate('/report')}>
+            <BarChartOutlined size={15} />
+          </div>
+          <div className="header__logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')} />
           <div className="header__right">
             <div className="header__avatar">
               <img src="/assets/images/avatar.png" alt="Avatar" />
@@ -65,7 +49,23 @@ function App() {
       <main>
         <div className="container flex mt-2 px-2">
           <Card
-            title="List 1"
+            title={
+              <>
+                <div style={{ paddingRight: 12 }}>
+                  {editTitleList ? (
+                    <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #d9d9d9', borderRadius: 6, paddingRight: 8 }}>
+                      <Input style={{ border: 0, outline: 0, boxShadow: '0 0 0 transparent' }} />
+                      <Button type="text" icon={<CloseOutlined />} size="small" onClick={() => setEditTitleList(false)} />
+                    </div>
+                   
+                  ) : (
+                    <div onClick={() => setEditTitleList(true)} style={{ cursor: 'pointer' }}>
+                      List 1
+                    </div>
+                  )}
+                </div>
+              </>
+            }
             className="cardList"
             extra={
               <>
@@ -73,7 +73,7 @@ function App() {
                   <Button
                     shape="circle"
                     icon={<PlusOutlined />}
-                    onClick={() => setOpen(true)}
+                    onClick={() => setOpenAddCard(true)}
                   />
                 </Tooltip>
 
@@ -102,138 +102,28 @@ function App() {
             <SimpleCard />
             <SimpleCard />
           </Card>
-          <Card
-            title="List 2"
-            className="cardList"
-            extra={
-              <>
-                <Tooltip title="Add a card">
-                  <Button
-                    shape="circle"
-                    icon={<PlusOutlined />}
-                    onClick={() => setOpen(true)}
-                  />
-                </Tooltip>
-
-                <Popconfirm
-                  title="Delete the list"
-                  description="Are you sure to delete this list?"
-                  onConfirm={() => {}}
-                  onCancel={() => {}}
-                  okText="Yes"
-                  cancelText="No"
-                  className="ml-10"
-                >
-                  <Tooltip title="Delete this list">
-                    <Button
-                      shape="circle"
-                      icon={<DeleteOutlined />}
-                    />
-                  </Tooltip>
-                </Popconfirm>
-              </>
-            }
-          >
-            <SimpleCard />
-            <SimpleCard />
-            <SimpleCard />
-            <SimpleCard />
-            <SimpleCard />
-          </Card>
-          <Button type="text">
-            <PlusOutlined /> Add another list
-          </Button>
+          
+          <div>
+            {openCreateList ? (
+              <Card style={{ width: 300 }} size="small">
+                <span>Title:</span><Input />
+                <div style={{ display: 'flex', justifyContent: 'end', marginTop: 8 }}>
+                  <Button type="text" danger onClick={() => setOpenCreateList(false)} style={{ marginRight: 4 }}>Close</Button>
+                  <Button type="primary" onClick={() => setOpenCreateList(false)}>Create</Button>
+                </div>
+              </Card>
+            ) : (
+              <Button type="text" onClick={() => setOpenCreateList(true)}>
+                <PlusOutlined /> Add another list
+              </Button>
+            )}
+          </div>
+          
         </div>
       </main>
 
-      <Modal
-        title="Add Card"
-        open={open}
-        onOk={form.submit}
-        onCancel={handleCancel}
-        confirmLoading={confirmLoading}
-      >
-        <br />
-        <Form
-          name="basic"
-          form={form}
-          initialValues={{ status: "new" }}
-          onFinish={handleSubmit}
-          autoComplete="off"
-          labelCol={{ flex: "110px" }}
-          labelAlign="left"
-          wrapperCol={{ flex: 1 }}
-        >
-          <Form.Item
-            label="Title"
-            name="title"
-            rules={[{ required: true, message: "Please input your title!" }]}
-          >
-            <Input />
-          </Form.Item>
+      <ModalAddCard openAddCard={openAddCard} setOpenAddCard={setOpenAddCard} />
 
-          <Form.Item
-            label="Description"
-            name="description"
-            rules={[
-              { required: true, message: "Please input your description!" },
-            ]}
-          >
-            <TextArea rows={4} />
-          </Form.Item>
-
-          <Form.Item
-            label="Member"
-            name="member"
-            rules={[
-              { required: true, message: "Please input your description!" },
-            ]}
-          >
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "100%" }}
-              placeholder="Please select"
-              optionLabelProp="label"
-              onChange={handleChange}
-            >
-              <Option value="tony123" label="tony 123">
-                <div className="selectField">
-                  <Avatar src="https://picsum.photos/id/237/200/300" />
-                  <span>Tony Nguyen</span>
-                </div>
-              </Option>
-              <Option value="phuong123" label="phuong 123">
-                <div className="selectField">
-                  <Avatar src="https://picsum.photos/id/237/200/300" />
-                  <span>Phuong Nguyen</span>
-                </div>
-              </Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="Status" name="status">
-            <Select
-              style={{ width: 120 }}
-              onChange={handleChange}
-              options={[
-                {
-                  value: "new",
-                  label: "New",
-                },
-                {
-                  value: "inprocess",
-                  label: "In process",
-                },
-                {
-                  value: "done",
-                  label: "Done",
-                },
-              ]}
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 }
