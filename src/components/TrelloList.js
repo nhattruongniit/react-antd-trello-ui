@@ -1,4 +1,3 @@
-import React from 'react';
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
 // ant core
